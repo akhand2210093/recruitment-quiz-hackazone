@@ -16,3 +16,5 @@ urlpatterns = [
     path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
     path('', include(router.urls)),
 ]
+
+#just to commit
