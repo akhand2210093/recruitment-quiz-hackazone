@@ -34,6 +34,7 @@ class User(AbstractBaseUser):
 class Question(models.Model):
     section = models.IntegerField()
     text = models.CharField(max_length=255)
+    correct_answer = models.CharField(max_length=255)  # Store only the correct answer
 
     def __str__(self):
         return self.text

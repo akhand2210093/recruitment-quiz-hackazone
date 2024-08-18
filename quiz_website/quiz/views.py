@@ -4,6 +4,7 @@ from django.shortcuts import render
 
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -37,14 +38,16 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
 
     def create(self, request, *args, **kwargs):
-        question_data = request.data.get('question')
-        answers_data = request.data.get('answers')
+        questions_data = request.data.get('questions', [])
+        created_questions = []
 
-        question = Question.objects.create(**question_data)
-        for answer_data in answers_data:
-            Answer.objects.create(question=question, **answer_data)
+        for question_data in questions_data:
+            question_info = question_data.get('question')
+            
+            question = Question.objects.create(**question_info)
+            created_questions.append(question)
 
-        serializer = self.get_serializer(question)
+        serializer = self.get_serializer(created_questions, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 # View all questions

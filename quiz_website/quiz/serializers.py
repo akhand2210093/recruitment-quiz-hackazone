@@ -7,11 +7,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['student_number', 'email', 'name']
 
 class QuestionSerializer(serializers.ModelSerializer):
-    answers = serializers.StringRelatedField(many=True, read_only=True)
-    
     class Meta:
         model = Question
-        fields = ['id', 'section', 'text', 'answers']
+        fields = ['id', 'section', 'text', 'correct_answer']  # Only include the correct answer
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
