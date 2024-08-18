@@ -22,15 +22,28 @@ class UserLoginView(APIView):
         email = data.get('email')
         name = data.get('name')
 
+        # Validate email domain
+        if not email.endswith('@akgec.ac.in'):
+            return Response({'detail': 'Email must be in the domain @akgec.ac.in'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check for unique student number and email
+        if User.objects.filter(student_number=student_number).exists():
+            return Response({'detail': 'Student number already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response({'detail': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create or retrieve user
         user, created = User.objects.get_or_create(
             student_number=student_number,
             defaults={'email': email, 'name': name}
         )
+
         if not created and user.email != email:
-            return Response({'detail': 'Invalid email.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Email does not match existing record.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 # View to add questions and answers
 class QuestionViewSet(viewsets.ModelViewSet):

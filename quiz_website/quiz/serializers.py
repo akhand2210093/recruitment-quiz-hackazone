@@ -1,10 +1,17 @@
 from rest_framework import serializers
 from .models import User, Question, Answer, UserResponse, Leaderboard
+from django.core.exceptions import ValidationError
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['student_number', 'email', 'name']
+
+    def validate_email(self, value):
+        if not value.endswith('@akgec.ac.in'):
+            raise serializers.ValidationError('Email must be in the domain @akgec.ac.in')
+        return value
+
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:

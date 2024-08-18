@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
 
 class UserManager(BaseUserManager):
     def create_user(self, student_number, email, name, password=None):
@@ -17,19 +20,25 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
 
 class User(AbstractBaseUser):
-    student_number = models.CharField(max_length=15, unique=True)
+    student_number = models.CharField(max_length=9, unique=True)
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=255)
-    
+
     objects = UserManager()
 
     USERNAME_FIELD = 'student_number'
     REQUIRED_FIELDS = ['email', 'name']
 
     def __str__(self):
-        return self.name
+        return f'{self.name} ({self.student_number})'
+
+    def clean(self):
+        super().clean()
+        if not self.email.endswith('@akgec.ac.in'):
+            raise ValidationError(_('Email must be in the domain @akgec.ac.in'))
 
 class Question(models.Model):
     section = models.IntegerField()
