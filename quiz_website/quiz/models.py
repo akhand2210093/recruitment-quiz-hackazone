@@ -23,9 +23,9 @@ class UserManager(BaseUserManager):
     
 
 class User(AbstractBaseUser):
+    name = models.CharField(max_length=255)
     student_number = models.CharField(max_length=9, unique=True)
     email = models.EmailField(unique=True)
-    name = models.CharField(max_length=255)
 
     objects = UserManager()
 
@@ -59,7 +59,11 @@ class Answer(models.Model):
 class UserResponse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    answer_text = models.CharField(max_length=255)  # Store the user's answer directly
+
+    def __str__(self):
+        return f'{self.user.name} - {self.question.text}: {self.answer_text}'
+
 
 class Leaderboard(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

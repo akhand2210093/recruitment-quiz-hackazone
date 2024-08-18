@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import User, Question, Answer, UserResponse, Leaderboard
+from .models import User, Question, UserResponse, Answer, Leaderboard
 from django.core.exceptions import ValidationError
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['student_number', 'email', 'name']
+        fields = ['name','student_number', 'email']
 
     def validate_email(self, value):
         if not value.endswith('@akgec.ac.in'):

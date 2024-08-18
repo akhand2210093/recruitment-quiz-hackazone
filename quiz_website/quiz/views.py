@@ -10,17 +10,20 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Question, Answer, UserResponse, Leaderboard
 from .serializers import (
-    UserSerializer, QuestionSerializer, AnswerSerializer, 
-    UserResponseSerializer, LeaderboardSerializer
+    UserSerializer, QuestionSerializer, AnswerSerializer, UserResponseSerializer, LeaderboardSerializer
 )
+
+
+
 
 # Login API (or Create User)
 class UserLoginView(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
+        name = data.get('name')
         student_number = data.get('student_number')
         email = data.get('email')
-        name = data.get('name')
+        
 
         # Validate email domain
         if not email.endswith('@akgec.ac.in'):
@@ -76,23 +79,27 @@ class SubmitResponseView(APIView):
         responses = request.data.get('responses', [])
         user = request.user
         score = 0
-        
+
         for response in responses:
             question = get_object_or_404(Question, id=response['question_id'])
-            answer = get_object_or_404(Answer, id=response['answer_id'])
-            
-            UserResponse.objects.create(user=user, question=question, answer=answer)
-            
-            if answer.is_correct:
+            submitted_answer = response['answer_text'].strip().lower()
+
+            # Check if the submitted answer matches the correct answer
+            if submitted_answer == question.correct_answer.strip().lower():
                 score += 4
             else:
                 score -= 1
 
+            # Store the user's response (whether correct or not)
+            UserResponse.objects.create(user=user, question=question, answer_text=submitted_answer)
+
+        # Update or create the leaderboard entry for the user
         leaderboard, created = Leaderboard.objects.get_or_create(user=user)
         leaderboard.score = score
         leaderboard.save()
 
         return Response({'score': score}, status=status.HTTP_200_OK)
+
 
 # View user score
 class UserScoreView(generics.RetrieveAPIView):
