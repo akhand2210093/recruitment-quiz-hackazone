@@ -21,3 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('quiz.urls')),
 ]
+
+
+#just to commit and make again
