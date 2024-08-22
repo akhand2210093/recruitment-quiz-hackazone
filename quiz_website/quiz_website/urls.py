@@ -22,5 +22,3 @@ urlpatterns = [
     path('api/', include('quiz.urls')),
 ]
 
-
-#just to commit and make again
