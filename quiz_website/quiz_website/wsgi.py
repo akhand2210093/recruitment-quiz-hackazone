@@ -16,4 +16,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'quiz_website.settings')
 application = get_wsgi_application()
 
 
-#kuch
+#kuch bhi
