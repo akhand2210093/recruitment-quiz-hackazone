@@ -71,7 +71,8 @@ class QuestionListView(generics.ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
-# Submit all responses at once
+#hello
+# Submit all responses at once 
 class SubmitResponseView(APIView):
     permission_classes = [IsAuthenticated]
 
