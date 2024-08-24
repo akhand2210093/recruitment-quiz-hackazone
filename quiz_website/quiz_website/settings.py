@@ -46,6 +46,14 @@ REST_FRAMEWORK = {
     ),
 }
 
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Example: 5 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Example: 1 day
+}
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
