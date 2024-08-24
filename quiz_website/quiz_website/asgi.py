@@ -19,8 +19,4 @@ application = get_asgi_application()
 #   "user": {
 #     "name": "ohn joe",
 #     "student_number": "12389",
-#     "email": "hn.oe@akgec.ac.in"
-#   },
-#   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0NTE3OTExLCJpYXQiOjE3MjQ1MTc2MTEsImp0aSI6IjFmYTE1MmUyNDFhYzRiMTdiYzgyMWNjNmMyZGIyZjBhIiwidXNlcl9pZCI6NX0.c7pnxuQb5GDY2Lkq89vli3quZonH3Lzu57b0lONZw8Q",
-#   "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyNDYwNDAxMSwiaWF0IjoxNzI0NTE3NjExLCJqdGkiOiI3NWJmZDkwMzQ0MGI0ZDJlYWE5ZWRmNTFlMGI5NTIyOCIsInVzZXJfaWQiOjV9.OITUj43fiJWl4uJ98HMEoqrLGKiGm7f_faeEtsf5TPk"
-# }
+#     "email"
