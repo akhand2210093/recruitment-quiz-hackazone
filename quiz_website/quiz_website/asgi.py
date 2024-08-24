@@ -15,8 +15,3 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'quiz_website.settings')
 
 application = get_asgi_application()
 
-# {
-#   "user": {
-#     "name": "ohn joe",
-#     "student_number": "12389",
-#     "email"
