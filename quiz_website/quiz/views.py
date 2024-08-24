@@ -4,8 +4,8 @@ from django.shortcuts import render
 
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Question, Answer, UserResponse, Leaderboard
@@ -44,8 +44,15 @@ class UserLoginView(APIView):
         if not created and user.email != email:
             return Response({'detail': 'Email does not match existing record.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # Generate JWT token
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        return Response({
+            'user': UserSerializer(user).data,
+            'access_token': access_token,
+            'refresh_token': str(refresh)
+        }, status=status.HTTP_200_OK)
 
 
 # View to add questions and answers
