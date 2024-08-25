@@ -1,8 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
+
+from django.contrib.auth.models import BaseUserManager
 
 class UserManager(BaseUserManager):
     def create_user(self, student_number, email, name, password=None):
@@ -20,12 +22,28 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
 
-class User(AbstractBaseUser):
+    def create_superuser(self, student_number, email, name, password):
+        user = self.create_user(
+            student_number=student_number,
+            email=email,
+            name=name,
+            password=password
+        )
+        user.is_staff = True
+        user.is_superuser = True
+        user.is_active = True  # Make sure the superuser is active
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     student_number = models.CharField(max_length=9, unique=True)
     email = models.EmailField(unique=True)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()
 

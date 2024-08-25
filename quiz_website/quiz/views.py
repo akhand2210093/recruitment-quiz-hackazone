@@ -79,33 +79,42 @@ class QuestionListView(generics.ListAPIView):
     serializer_class = QuestionSerializer
 
 # Submit all responses at once
+from rest_framework.exceptions import NotFound
+
 class SubmitResponseView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        responses = request.data.get('responses', [])
-        user = request.user
-        score = 0
+        try:
+            responses = request.data.get('responses', [])
+            user = request.user
+            score_increment = 0  # This will store the score for this particular submission
 
-        for response in responses:
-            question = get_object_or_404(Question, id=response['question_id'])
-            submitted_answer = response['answer_text'].strip().lower()
+            for response in responses:
+                question = get_object_or_404(Question, id=response['question_id'])
+                submitted_answer = response['answer_text'].strip().lower()
 
-            # Check if the submitted answer matches the correct answer
-            if submitted_answer == question.correct_answer.strip().lower():
-                score += 4
-            else:
-                score -= 1
+                # Check if the submitted answer matches the correct answer
+                if submitted_answer == question.correct_answer.strip().lower():
+                    score_increment += 4
+                else:
+                    score_increment -= 1
 
-            # Store the user's response (whether correct or not)
-            UserResponse.objects.create(user=user, question=question, answer_text=submitted_answer)
+                # Store the user's response (whether correct or not)
+                UserResponse.objects.create(user=user, question=question, answer_text=submitted_answer)
 
-        # Update or create the leaderboard entry for the user
-        leaderboard, created = Leaderboard.objects.get_or_create(user=user)
-        leaderboard.score = score
-        leaderboard.save()
+            # Update or create the leaderboard entry for the user
+            leaderboard, created = Leaderboard.objects.get_or_create(user=user)
+            leaderboard.score += score_increment  # Add the current submission's score to the existing score
+            leaderboard.save()
 
-        return Response({'score': score}, status=status.HTTP_200_OK)
+            return Response({'score': leaderboard.score}, status=status.HTTP_200_OK)
+        
+        except NotFound:
+            return Response({'detail': 'User or Question not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # View user score
