@@ -73,7 +73,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(created_questions, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-# View all questions
+# View all questions changes
 class QuestionListView(generics.ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
