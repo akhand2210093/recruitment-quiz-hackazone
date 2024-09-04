@@ -1,7 +1,8 @@
 from django.shortcuts import render
 
 # Create your views here.
-
+import requests
+from django.conf import settings
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,7 +24,19 @@ class UserLoginView(APIView):
         name = data.get('name')
         student_number = data.get('student_number')
         email = data.get('email')
-        
+        recaptcha_response = data.get('g-recaptcha-response')
+
+        # Validate reCAPTCHA
+        recaptcha_verification_url = 'https://www.google.com/recaptcha/api/siteverify'
+        recaptcha_data = {
+            'secret': settings.RECAPTCHA_SECRET_KEY,
+            'response': recaptcha_response
+        }
+        recaptcha_verification = requests.post(recaptcha_verification_url, data=recaptcha_data)
+        recaptcha_result = recaptcha_verification.json()
+
+        if not recaptcha_result.get('success'):
+            return Response({'detail': 'Invalid reCAPTCHA. Please try again.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validate email domain
         if not email.endswith('@akgec.ac.in'):
