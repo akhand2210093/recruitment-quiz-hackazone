@@ -24,6 +24,7 @@ class UserLoginView(APIView):
         name = data.get('name')
         student_number = data.get('student_number')
         email = data.get('email')
+        # password = data.get('password')  # Get password from request data
         recaptcha_response = data.get('g-recaptcha-response')
 
         # Validate reCAPTCHA
@@ -47,6 +48,11 @@ class UserLoginView(APIView):
             return Response({'detail': 'Student number already exists.'}, status=status.HTTP_400_BAD_REQUEST)
         if User.objects.filter(email=email).exists():
             return Response({'detail': 'Email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Password validation
+        # expected_password = f'{student_number}@AKGEC'
+        # if password != expected_password:
+        #     return Response({'detail': 'Invalid password. The password should be in the format {student_number}@AKGEC.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create or retrieve user
         user, created = User.objects.get_or_create(
